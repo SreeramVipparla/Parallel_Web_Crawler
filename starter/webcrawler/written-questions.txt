@@ -1,0 +1,71 @@
+Written Questions
+
+Q1. Run the web crawler using the configurations located at src/main/config/written_question_1a.json and
+    src/main/config/written_question_1b.json. The only difference between these configurations is that one always uses
+    the sequential crawler and the other always uses the parallel crawler. Inspect the profile output in
+    profileData.txt.
+
+    If you are using a multi-processor computer, you should notice that SequentialWebCrawler#crawl and
+    ParallelWebCrawler#crawl took about the same amount of time, but PageParserImpl#parse took much longer when run with
+    the ParallelWebCrawler.
+
+    Why did the parser take more time when run with ParallelWebCrawler?
+Answer- It is because the Profiler sums the time taken by the parse method in all threads.
+      The record method in the ProfilingState class, which is used in the ProfilingMethodInterceptor, sums the duration received.
+
+
+Q2. Your manager ran your crawler on her old personal computer, using the configurations from Q1, and she notices that
+    the sequential crawler actually outperforms the parallel crawler. She would like to know why.
+
+    (a) Suggest one reason why the sequential web crawler was able to read more web pages than the parallel crawler.
+        (Hint: Try setting "parallelism" to 1 in the JSON configs to simulate your manager's computer.)
+
+    (b) Suggest one scenario in which the parallel web crawler will almost certainly perform better than the sequential
+        crawler. Why will it perform better?
+Answer-
+     a) One possible reason is that the issue is related to hardware limitations since though you run the application as parallel app,
+        you still need a multi-processor PC to notice any improvement in performance and the fact that you want to run
+        a multithreaded application in a single CPU, could make the application slower than running the sequential app.
+
+     b) The parallel web crawler will perform better in scenarios which the program runs on a multi-core
+        machine (a "real" parallelism environment).
+
+
+
+
+Q3. Analyze your method profiler through the lens of Aspect Oriented Programming, by answering the following questions:
+
+    (a) What cross-cutting concern is being addressed by the com.udacity.webcrawler.profiler.Profiler class?
+
+    (b) What are the join points of the Profiler in the web crawler program?
+Answer-
+     a)The cross-cutting concern is performance profiling.
+
+     b) The methods having "@Profiled" annotation
+
+
+Q4. Identify three (3) different design patterns used in this project, and explain which interfaces, classes, and/or
+    libraries use or implement those design patterns.
+
+    For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
+    anything, you can name two things you disliked.
+
+Answer-1) Builder Pattern : This design pattern  is implemented to handle the creations of CrawlerConfiguration objects through Jackson plugin
+          which allows serialization of objects to JSON and the other way around. It is applied to parse the configuration in JSON format
+          to CrawlerConfiguration objets. The parts that I liked  about this design pattern is that it allows flexibility since it is easy to add more
+          parameters if needed and encourages immutability and also method chaining. The part that I disliked is that a lo of code is needed
+          to implement it which increases complexity.
+
+        2)Dependency Injection Pattern: moves the creation of dependencies to outside of the code. It is widely used by many
+          of this web crawler program such as WebCrawlerMain, ParallelWebCrawler and SequentialWebCrawler classes.
+          One thing that I LIKE about the pattern is that it can create external dependency objects independently from our main
+          code base. The DI framework can inject all external dependencies, so our implementation does not need to worry about them.
+          here is no particular thing I DISLIKE, but it is important to read and understand well the DI framework being used, so
+          they can be leveraged at most and appropriately.
+
+        3)Abstract Factory: This DP is implemented to handle the PageParserImpls creation through the PageParser get()
+          method in the PageParserFactory Class.
+          This is accomplished by the implementation of the interface PageParser which has the get() method that is called
+          every time a new PageParserIml object needs to be created passing only the url parameter and not the other two parameters.
+          I liked the level of abstraction this DP has since it allows to hide construction details from the world.
+          What I dislike is the level of complexity added with extra classes and interfaces.
