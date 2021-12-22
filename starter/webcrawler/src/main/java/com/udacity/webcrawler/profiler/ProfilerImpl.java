@@ -3,9 +3,11 @@ package com.udacity.webcrawler.profiler;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import javax.inject.Inject;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.file.StandardOpenOption;
 import java.lang.reflect.Proxy;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -75,10 +77,12 @@ final class ProfilerImpl implements Profiler {
 
   @Override
   public void writeData(Path path) throws IOException {
-    try (FileWriter fileWriter = new FileWriter(path.toString(), true)) {
-      BufferedWriter writer = new BufferedWriter(fileWriter);
-      this.writeData(writer);
-      writer.close();
+    Objects.requireNonNull(path);
+
+    try(Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)){
+      writeData(writer);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
