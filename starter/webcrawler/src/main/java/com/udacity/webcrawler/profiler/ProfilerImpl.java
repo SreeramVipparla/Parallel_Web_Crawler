@@ -1,13 +1,13 @@
 package com.udacity.webcrawler.profiler;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -74,19 +74,11 @@ final class ProfilerImpl implements Profiler {
   }
 
   @Override
-  public void writeData(Path path) {
-    // TODO: Write the ProfilingState data to the given file path. If a file already exists at that
-    //       path, the new data should be appended to the existing file.
-
-    //Redo this
-
-    try {
-      Files.write(path, (state + "\n").getBytes(),
-              StandardOpenOption.CREATE,
-              StandardOpenOption.WRITE,
-              StandardOpenOption.APPEND);
-    }catch(IOException e){
-      e.printStackTrace();
+  public void writeData(Path path) throws IOException {
+    try (FileWriter fileWriter = new FileWriter(path.toString(), true)) {
+      BufferedWriter writer = new BufferedWriter(fileWriter);
+      this.writeData(writer);
+      writer.close();
     }
   }
 
